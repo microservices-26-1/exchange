@@ -4,7 +4,7 @@ import requests
 
 router = APIRouter()
 
-@router.get("/exchange/{from_currency}/{to_currency}")
+@router.get("/exchange/{from_currency}/{to_currency}") 
 def exchange( 
     request: Request,
     from_currency: str,
