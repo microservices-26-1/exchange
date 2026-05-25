@@ -1,28 +1,24 @@
 pipeline {
-    agent none
+    agent any
     environment {
         SERVICE = 'exchange'
         NAME = "youcancallmegus/${env.SERVICE}"
     }
     stages {
         stage('Install Dependencies') {
-            agent {
-                docker { image 'python:3.11-slim' }
-            }
             steps {
-                sh 'pip install -r requirements.txt'
+                sh '''
+                    apt-get update && apt-get install -y python3 python3-pip
+                    pip3 install -r requirements.txt --break-system-packages
+                '''
             }
         }
         stage('Test') {
-            agent {
-                docker { image 'python:3.11-slim' }
-            }
             steps {
                 sh 'pytest tests/ -v'
             }
         }
         stage('Build & Push Image') {
-            agent any  // usa o Jenkins direto, que tem Docker
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credential',
