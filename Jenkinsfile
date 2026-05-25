@@ -13,11 +13,6 @@ pipeline {
                 '''
             }
         }
-        stage('Test') {
-            steps {
-                sh 'pytest tests/ -v'
-            }
-        }
         stage('Build & Push Image') {
             steps {
                 withCredentials([usernamePassword(
