@@ -13,10 +13,11 @@ def exchange(request: Request, from_currency: str, to_currency: str):
     to_currency = to_currency.upper()
     key = from_currency + to_currency
 
-    if key in _cache:
-        cached_at, cached_data = _cache[key]
-        if (datetime.now() - cached_at).seconds < _CACHE_TTL_SECONDS:
-            return cached_data
+    if response.status_code == 429:
+        if key in _cache:
+            _, cached_data = _cache[key]
+            return cached_data  # retorna o último valor mesmo expirado
+        raise HTTPException(status_code=429, detail="Exchange rate limit exceeded, try again later")
 
     response = requests.get(
         f"https://economia.awesomeapi.com.br/json/last/{from_currency}-{to_currency}"
